@@ -23,12 +23,17 @@ public abstract class Player : NetworkBehaviour, IDamageable
 
     protected TeamStateManager teamStateManager;
 
-
+    
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0;
         inputActions = new InputSystem_Actions();
+    }
+
+    protected virtual void Start()
+    {
+        teamStateManager = TeamStateManager.Instance;
     }
 
     public override void OnStartLocalPlayer()
@@ -80,7 +85,7 @@ public abstract class Player : NetworkBehaviour, IDamageable
     [Command]
     private void CmdTakeDamage(int damage)
     {
-        TeamStateManager.Instance.TakeTeamDamage(damage);
+        teamStateManager.TakeTeamDamage(damage);
     }
 
     private IEnumerator InvincibilityRoutine()

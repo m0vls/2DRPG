@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 2152905057092823129}
   - component: {fileID: 4416013229495441002}
   - component: {fileID: 235823202105005538}
-  - component: {fileID: 1465254741389842058}
+  - component: {fileID: 1618236745438770387}
   m_Layer: 0
   m_Name: MagePlayer
   m_TagString: Player
@@ -253,7 +253,7 @@ MonoBehaviour:
   positionSensitivity: 0.01
   rotationSensitivity: 0.01
   scaleSensitivity: 0.01
---- !u!114 &1465254741389842058
+--- !u!114 &1618236745438770387
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -262,9 +262,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 6519772206336313149}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc29cb79204990c48be13ffb906ec107, type: 3}
+  m_Script: {fileID: 11500000, guid: 575ba2fb1dbb2e34f867dd5201ba0dfa, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::KnightPlayer
+  m_EditorClassIdentifier: Assembly-CSharp::MagePlayer
   syncMethod: 0
   syncDirection: 0
   syncMode: 0
