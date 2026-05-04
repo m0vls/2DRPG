@@ -8,7 +8,7 @@ public abstract class Enemy : NetworkBehaviour, IDamageable
 {
     protected NavMeshAgent agent;
 
-    [SerializeField] protected int maxHealth = 50;
+    [SerializeField] protected float maxHealth = 50;
     [SerializeField] protected float detectionRange = 2f;
 
     //public virtual int MaxHealth 
@@ -24,7 +24,7 @@ public abstract class Enemy : NetworkBehaviour, IDamageable
     //    }
     //}
 
-    [SyncVar] protected int currentHealth;
+    [SyncVar] [SerializeField] protected float currentHealth;
 
     protected virtual void Awake()
     {
@@ -43,10 +43,10 @@ public abstract class Enemy : NetworkBehaviour, IDamageable
     protected abstract void StartMovement();
 
     [Server]
-    public void TakeDamage(int damageAmount)
+    public void TakeDamage(float damageAmount)
     {
         currentHealth -= damageAmount;
-        if (currentHealth <= 0 )
+        if (currentHealth <= 0)
         {
             NetworkServer.Destroy(gameObject);
         }

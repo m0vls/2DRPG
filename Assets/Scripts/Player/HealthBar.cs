@@ -7,7 +7,7 @@ public class HealthBar : MonoBehaviour
 
     private float targetFill = 1f;
 
-    public void UpdateBarUI(int currentHealth)
+    public void UpdateBarUI(float currentHealth)
     {
         targetFill = currentHealth / 100f;
     }

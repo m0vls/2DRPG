@@ -16,10 +16,14 @@ public abstract class Player : NetworkBehaviour, IDamageable
     [Header("Передвижение игрока")]
     [SerializeField] protected float moveSpeed = 5f;
 
+    [SyncVar(hook =nameof(OnDirectionChanged))]
+    public Vector2 lastFacingDirection = Vector2.down;
+
     protected Rigidbody2D rb;
     protected InputSystem_Actions inputActions;
     protected Vector2 currentMovementInput;
 
+    protected bool isAttacking = false;
 
     protected TeamStateManager teamStateManager;
 
@@ -54,12 +58,16 @@ public abstract class Player : NetworkBehaviour, IDamageable
     protected virtual void Update()
     {
         if (!isLocalPlayer) return;
+
         currentMovementInput = inputActions.Player.Move.ReadValue<Vector2>();
+        UpdateFacingDirection();
+
+        PlayerAttack();
     }
 
     protected virtual void FixedUpdate()
     {
-        if (isLocalPlayer)
+        if (isLocalPlayer && !isAttacking)
         {
             ApplyMovement(currentMovementInput);
         }
@@ -71,7 +79,47 @@ public abstract class Player : NetworkBehaviour, IDamageable
         rb.linearVelocity = velocity;
     }
 
-    public void TakeDamage(int damageAmount)
+    #region Направление игрока
+    protected virtual void OnDirectionChanged(Vector2 olddir, Vector2 newdir)
+    {
+        //обновление аниматора в будущем
+    }
+
+    [Command]
+    protected void CmdUpdateDirection(Vector2 newDir)
+    {
+        lastFacingDirection = newDir;
+    }
+
+    protected Vector2 GetSnapDirection(Vector2 input)
+    {
+        if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
+        {
+            return input.x > 0 ? Vector2.right : Vector2.left;
+        }
+        return input.y > 0 ? Vector2.up : Vector2.down;
+    }
+
+    private void UpdateFacingDirection()
+    {
+        if (currentMovementInput.magnitude > 0.1f && !isAttacking)
+        {
+            // Берем преобладающее направление (крестовина: вверх, вниз, влево, вправо)
+            Vector2 newDir = GetSnapDirection(currentMovementInput);
+
+            if (newDir != lastFacingDirection)
+            {
+                // Отправляем новое направление на сервер
+                CmdUpdateDirection(newDir);
+            }
+        }
+    }
+    #endregion
+
+    #region Нанесение/Получение урона
+    protected abstract void PlayerAttack();
+
+    public void TakeDamage(float damageAmount)
     {
         if (isInvincible || !isLocalPlayer)
         {
@@ -83,7 +131,7 @@ public abstract class Player : NetworkBehaviour, IDamageable
     }
 
     [Command]
-    private void CmdTakeDamage(int damage)
+    private void CmdTakeDamage(float damage)
     {
         teamStateManager.TakeTeamDamage(damage);
     }
@@ -105,4 +153,5 @@ public abstract class Player : NetworkBehaviour, IDamageable
 
         isInvincible = false;
     }
+    #endregion
 }

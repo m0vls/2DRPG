@@ -7,9 +7,9 @@ public class TeamStateManager : NetworkBehaviour
     public static TeamStateManager Instance;
 
     [SyncVar(hook = nameof(OnHealthChanged))]
-    public int teamHealth = 100;
+    public float teamHealth = 100;
 
-    public UnityEvent<int> OnHealthUpdated;
+    public UnityEvent<float> OnHealthUpdated;
 
     public void Awake()
     {
@@ -25,7 +25,7 @@ public class TeamStateManager : NetworkBehaviour
     }
 
     [Server]
-    public void TakeTeamDamage(int damageAmount)
+    public void TakeTeamDamage(float damageAmount)
     {
         teamHealth -= damageAmount;
         if (teamHealth <= 0)
@@ -35,7 +35,7 @@ public class TeamStateManager : NetworkBehaviour
         }
     }
 
-    private void OnHealthChanged(int oldHealth, int newHealth)
+    private void OnHealthChanged(float oldHealth, float newHealth)
     {
         OnHealthUpdated?.Invoke(newHealth);
     }

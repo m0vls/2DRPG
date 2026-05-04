@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EnemyTouchDamage : MonoBehaviour
 {
-    [SerializeField] private int damage = 5;
+    [SerializeField] private float damage = 5;
 
     private void OnTriggerStay2D(Collider2D collision)
     {

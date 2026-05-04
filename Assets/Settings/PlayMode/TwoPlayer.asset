@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 15024, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: TwoPlayer
   m_EditorClassIdentifier: UnityEditor.MultiplayerModule.dll::Unity.Multiplayer.PlayMode.Editor.ScenarioConfig
-  m_Description: 
+  m_Description: 2 players
   m_EnableEditors: 1
   m_MainEditorInstance:
     Name: Main Editor
@@ -22,7 +22,7 @@ MonoBehaviour:
     - Main Editor|0_deploy
     m_Role: 3
     m_PlayerTag: 
-    m_InitialScene: {fileID: 0}
+    m_InitialScene: {fileID: 102900000, guid: 8c9cfa26abfee488c85f1582747f6a02, type: 3}
   m_EditorInstances:
   - Name: Player 2
     <CorrespondingNodeId>k__BackingField: Player 2|1_run

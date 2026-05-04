@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 5277356070818901887}
   - component: {fileID: 2555142090496498829}
   - component: {fileID: 3525148130606597241}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -194,10 +194,13 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   maxHealth: 50
+  detectionRange: 2
+  currentHealth: 0
   dashSpeed: 6
   dashDuration: 0.5
-  normalSpeed: 1
+  afterDashSpeed: 0
   pauseDuration: 0.5
+  normalSpeed: 1
   preparationTimer: 1.5
 --- !u!114 &3525148130606597241
 MonoBehaviour:
@@ -222,7 +225,7 @@ GameObject:
   m_Component:
   - component: {fileID: 384935824333950536}
   - component: {fileID: 7162007548977019698}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EnemyVisual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
