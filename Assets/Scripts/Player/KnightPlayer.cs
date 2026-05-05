@@ -30,14 +30,6 @@ public class KnightPlayer : Player
             attackSprite.enabled = false;
     }
 
-    /*protected override void Update()
-    {
-        base.Update();
-        if (!isLocalPlayer) return;
-
-        
-    }*/
-
     protected override void OnDirectionChanged(Vector2 olddir, Vector2 newdir)
     {
         base.OnDirectionChanged(olddir, newdir);
