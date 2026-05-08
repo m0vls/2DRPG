@@ -8,6 +8,8 @@ public class RPGNetworkManager : NetworkManager
     public GameObject knightPrefab;
     public GameObject magePrefab;
 
+    public float teamHealth = 100;
+
     private readonly Dictionary<NetworkConnectionToClient, PlayerClass> playerChoices = new Dictionary<NetworkConnectionToClient, PlayerClass>();
 
     [Header("UI")]
@@ -25,17 +27,19 @@ public class RPGNetworkManager : NetworkManager
         selectPanel.SetActive(true);
     }
 
-    void OnCreateCharacter(NetworkConnectionToClient conn, CharacterSelectMessage message)
+    private void OnCreateCharacter(NetworkConnectionToClient conn, CharacterSelectMessage message)
     {
         // 1. Запоминаем выбор игрока
         playerChoices[conn] = message.characterClass;
-
+        
         // 2. Вызываем метод спавна
         SpawnPlayerForConnection(conn, message.characterClass);
     }
 
     private void SpawnPlayerForConnection(NetworkConnectionToClient conn, PlayerClass charClass)
     {
+        if (conn.identity != null) return;
+
         GameObject prefab = charClass == PlayerClass.Knight ? knightPrefab : magePrefab;
 
         Transform startPos = GetStartPosition();
@@ -44,8 +48,21 @@ public class RPGNetworkManager : NetworkManager
         NetworkServer.AddPlayerForConnection(conn, player);
     }
 
+    public override void OnServerReady(NetworkConnectionToClient conn)
+    {
+        base.OnServerReady(conn);
+
+        if (conn.identity == null)
+        {
+            if (playerChoices.TryGetValue(conn, out var playerClass))
+            {
+                SpawnPlayerForConnection(conn, playerClass);
+            }
+        }
+    }
+
     // Этот метод вызывается автоматически после смены сцены на сервере
-    public override void OnServerSceneChanged(string sceneName)
+    /*public override void OnServerSceneChanged(string sceneName)
     {
         base.OnServerSceneChanged(sceneName);
 
@@ -61,7 +78,7 @@ public class RPGNetworkManager : NetworkManager
                 SpawnPlayerForConnection(conn, chosenClass);
             }
         }
-    }
+    }*/
 
     public override void OnServerDisconnect(NetworkConnectionToClient conn)
     {
