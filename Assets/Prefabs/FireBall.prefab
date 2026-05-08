@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: 3084034835366900610}
   - component: {fileID: 5338759630541325774}
   - component: {fileID: 6383228375871243664}
-  - component: {fileID: 3581698764079673861}
+  - component: {fileID: 573498118142679616}
   - component: {fileID: 2681516633892580022}
   m_Layer: 8
   m_Name: FireBall
@@ -208,7 +208,7 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
---- !u!114 &3581698764079673861
+--- !u!114 &573498118142679616
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -223,7 +223,7 @@ MonoBehaviour:
   syncMethod: 0
   syncDirection: 0
   syncMode: 0
-  syncInterval: 0.05
+  syncInterval: 0
   target: {fileID: 905309401247158218}
   updateMethod: 0
   syncPosition: 1
@@ -265,4 +265,4 @@ MonoBehaviour:
   manaShardPrefab: {fileID: 4309859959995795487, guid: a72be014538501e469179cdd316f17a2, type: 3}
   enemyLayers:
     serializedVersion: 2
-    m_Bits: 192
+    m_Bits: 640

@@ -1,4 +1,5 @@
 using Mirror;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class RPGNetworkManager : NetworkManager
@@ -6,6 +7,8 @@ public class RPGNetworkManager : NetworkManager
     [Header("Префабы классов")]
     public GameObject knightPrefab;
     public GameObject magePrefab;
+
+    private readonly Dictionary<NetworkConnectionToClient, PlayerClass> playerChoices = new Dictionary<NetworkConnectionToClient, PlayerClass>();
 
     [Header("UI")]
     [SerializeField] private GameObject selectPanel;
@@ -24,16 +27,46 @@ public class RPGNetworkManager : NetworkManager
 
     void OnCreateCharacter(NetworkConnectionToClient conn, CharacterSelectMessage message)
     {
-        // Выбираем нужный префаб на основе сообщения
-        GameObject prefab = message.characterClass == PlayerClass.Knight ? knightPrefab : magePrefab;
+        // 1. Запоминаем выбор игрока
+        playerChoices[conn] = message.characterClass;
 
-        // Спавним объект в точке старта
+        // 2. Вызываем метод спавна
+        SpawnPlayerForConnection(conn, message.characterClass);
+    }
+
+    private void SpawnPlayerForConnection(NetworkConnectionToClient conn, PlayerClass charClass)
+    {
+        GameObject prefab = charClass == PlayerClass.Knight ? knightPrefab : magePrefab;
+
         Transform startPos = GetStartPosition();
         GameObject player = Instantiate(prefab, startPos.position, startPos.rotation);
 
-        // Критически важно для Mirror: привязываем объект к соединению
         NetworkServer.AddPlayerForConnection(conn, player);
+    }
 
-        Debug.Log($"Игрок {conn.connectionId} заспавнен как {(message.characterClass == PlayerClass.Knight ? "Рыцарь" : "Маг")}");
+    // Этот метод вызывается автоматически после смены сцены на сервере
+    public override void OnServerSceneChanged(string sceneName)
+    {
+        base.OnServerSceneChanged(sceneName);
+
+        // Пересоздаем игроков для всех активных соединений
+        foreach (var entry in playerChoices)
+        {
+            NetworkConnectionToClient conn = entry.Key;
+            PlayerClass chosenClass = entry.Value;
+
+            // Если объект игрока был уничтожен при смене сцены, спавним его заново
+            if (conn.identity == null)
+            {
+                SpawnPlayerForConnection(conn, chosenClass);
+            }
+        }
+    }
+
+    public override void OnServerDisconnect(NetworkConnectionToClient conn)
+    {
+        // Очищаем данные при выходе игрока из игры
+        playerChoices.Remove(conn);
+        base.OnServerDisconnect(conn);
     }
 }
