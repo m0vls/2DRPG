@@ -21,6 +21,13 @@ public class MagePlayer : Player
         mainCamera = Camera.main;
     }
 
+    public override void OnStartLocalPlayer()
+    {
+        base.OnStartLocalPlayer();
+
+        UIManager.Instance.ShowMageUI();
+    }
+
     public override void OnStartServer()
     {
         base.OnStartServer();

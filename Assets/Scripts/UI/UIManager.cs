@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
 
     [Header("Контроллеры UI")]
     [SerializeField] private HealthBar healthBar;
+    //[SerializeField] private ManaBar manaBar;
     [SerializeField] private DefeatUI defeatUI;
 
     private void Awake()
@@ -20,6 +21,15 @@ public class UIManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    public void ShowKnightUI()
+    {
+        healthBar.gameObject.SetActive(true);
+    }
+    public void ShowMageUI()
+    {
+        healthBar.gameObject.SetActive(true);
     }
 
     public void ShowDefeat()

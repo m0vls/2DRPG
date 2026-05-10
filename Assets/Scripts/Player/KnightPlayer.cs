@@ -30,6 +30,13 @@ public class KnightPlayer : Player
             attackSprite.enabled = false;
     }
 
+    public override void OnStartLocalPlayer()
+    {
+        base.OnStartLocalPlayer();
+
+        UIManager.Instance.ShowKnightUI();
+    }
+
     protected override void OnDirectionChanged(Vector2 olddir, Vector2 newdir)
     {
         base.OnDirectionChanged(olddir, newdir);
