@@ -6,6 +6,7 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance;
 
     [Header("Контроллеры UI")]
+    [SerializeField] private PauseUI pauseUI;
     [SerializeField] private HealthBar healthBar;
     //[SerializeField] private ManaBar manaBar;
     [SerializeField] private DefeatUI defeatUI;

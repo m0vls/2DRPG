@@ -1,4 +1,6 @@
 using Mirror;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -18,6 +20,15 @@ public class TeamStateManager : NetworkBehaviour
     public void Awake()
     {
         Instance = this;
+    }
+
+    private async void Start()
+    {
+        await UnityServices.InitializeAsync();
+        if (!AuthenticationService.Instance.IsSignedIn)
+        {
+            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+        }
     }
 
     public override void OnStartServer()
