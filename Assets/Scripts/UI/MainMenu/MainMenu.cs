@@ -7,8 +7,19 @@ using UnityEngine.InputSystem.Utilities;
 
 public class MainMenu : MonoBehaviour
 {
+    [Header("Коллекции UI")]
     [SerializeField] private GameObject[] mainMenuButtons;
     [SerializeField] private GameObject[] connectMenuButtons;
+
+    private GameObject[] currentUI;
+
+    [Header("Параметры анимации")]
+    [SerializeField] private float fadeDuration = 0.5f;
+    [SerializeField] private float moveDuration = 0.8f;
+    [SerializeField] private float startDelay = 0.5f;
+    [SerializeField] private float delayBetweenElements = 0.15f;
+
+    [Header("Название игры")]
     [SerializeField] private Transform TitleText;
     [SerializeField] private CanvasGroup pressAnyButtonText;
 
@@ -34,30 +45,6 @@ public class MainMenu : MonoBehaviour
         StartCoroutine(AnimateButtons(mainMenuButtons, 0f, true));
     }
 
-    /*public IEnumerator SpawnButtons()
-    {
-        yield return new WaitForSeconds(1f);
-
-        float delay = 0;
-
-        for (int i = 0; i < buttons.Length; i++)
-        {
-            GameObject btn = buttons[i];
-
-            btn.SetActive(true);
-
-            CanvasGroup cg = btn.GetComponent<CanvasGroup>();
-            cg.DOFade(1, 0.5f).SetDelay(delay);
-
-            RectTransform rt = btn.GetComponent<RectTransform>();
-            rt.DOAnchorPosX(0f, 0.8f)
-                .SetEase(Ease.InOutBack)
-                .SetDelay(delay);
-
-            delay += 0.15f;
-        }
-    }*/
-
     public IEnumerator AnimateButtons(GameObject[] elements, float targetPos, bool show)
     {
         float delay = 0;
@@ -67,7 +54,7 @@ public class MainMenu : MonoBehaviour
         int end = show ? elements.Length : -1;
         int step = show ? 1 : -1;
 
-        if (show) yield return new WaitForSeconds(0.8f);
+        if (show) yield return new WaitForSeconds(startDelay);
 
         for (int i = start; i != end; i += step)
         {
@@ -83,16 +70,16 @@ public class MainMenu : MonoBehaviour
             Ease selectedEase = show ? Ease.OutBack : Ease.InBack;
 
             // Сами анимации
-            cg.DOFade(targetAlpha, 0.5f).SetDelay(delay);
-            rt.DOAnchorPosX(targetPos, 0.8f)
+            cg.DOFade(targetAlpha, fadeDuration).SetDelay(delay);
+            rt.DOAnchorPosX(targetPos, moveDuration)
                 .SetEase(selectedEase)
                 .SetDelay(delay);
 
-            delay += 0.15f;
+            delay += delayBetweenElements;
         }
 
         // Ждем завершения
-        yield return new WaitForSeconds(0.8f + delay);
+        yield return new WaitForSeconds(moveDuration + delay);
 
         // Если мы скрывали кнопки, выключаем их в конце
         if (!show)
@@ -101,11 +88,21 @@ public class MainMenu : MonoBehaviour
         }
     }
 
+    private void SwitchMenu(GameObject[] from, GameObject[] to)
+    {
+        StartCoroutine(AnimateButtons(from, 250f, false));
+        currentUI = to;
+        StartCoroutine(AnimateButtons(to, 0f, true));
+    } 
+
     public void PlayGame()
     {
-        //SceneManager.LoadScene("Hub");
-        StartCoroutine(AnimateButtons(mainMenuButtons, 250f, false));
-        StartCoroutine(AnimateButtons(connectMenuButtons, 0f, true));
+        SwitchMenu(mainMenuButtons, connectMenuButtons);
+    }
+
+    public void BackToMenu()
+    {
+        SwitchMenu(currentUI, mainMenuButtons);
     }
 
     public void ExitGame()
