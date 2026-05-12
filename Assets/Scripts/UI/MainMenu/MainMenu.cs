@@ -47,6 +47,12 @@ public class MainMenu : MonoBehaviour
 
     public IEnumerator AnimateButtons(GameObject[] elements, float targetPos, bool show)
     {
+        foreach (var btn in elements)
+        {
+            CanvasGroup group = btn.GetComponent<CanvasGroup>();
+            if (group != null) group.blocksRaycasts = false;
+        }
+
         float delay = 0;
 
         // Если show = true, идем от 0 до конца. Если false — с конца к началу.
@@ -80,6 +86,15 @@ public class MainMenu : MonoBehaviour
 
         // Ждем завершения
         yield return new WaitForSeconds(moveDuration + delay);
+
+        if (show)
+        {
+            foreach (var btn in elements)
+            {
+                CanvasGroup group = btn.GetComponent<CanvasGroup>();
+                if (group != null) group.blocksRaycasts = true;
+            }
+        }
 
         // Если мы скрывали кнопки, выключаем их в конце
         if (!show)

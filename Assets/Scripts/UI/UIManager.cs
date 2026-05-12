@@ -3,6 +3,7 @@ using UnityEngine;
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
+    [HideInInspector] public bool IsPauseMenu = false;
 
     [Header("Контроллеры UI")]
     [SerializeField] private PauseUI pauseUI;
@@ -44,6 +45,7 @@ public class UIManager : MonoBehaviour
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "MainMenu") return;
 
         pauseUI.Toggle();
+        IsPauseMenu = !IsPauseMenu;
     }
 
     public void SetRoomCode(string roomCode)
