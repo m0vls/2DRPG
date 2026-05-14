@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1856322985054011455}
   - component: {fileID: 8068129785543923045}
+  - component: {fileID: 245916990685296842}
   m_Layer: 8
   m_Name: FireballVisual
   m_TagString: Untagged
@@ -81,7 +82,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: dd908e02223c62649bc51983eac081b9, type: 3}
+  m_Sprite: {fileID: -2180701618497998299, guid: d5f1f771c58eb994c8f3191279ce9fcb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -91,6 +92,28 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!95 &245916990685296842
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2330602686227768340}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 51bc106216119384bbc8ab73f827a411, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &4035624122863033488
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,7 +129,7 @@ GameObject:
   - component: {fileID: 573498118142679616}
   - component: {fileID: 2681516633892580022}
   m_Layer: 8
-  m_Name: FireBall
+  m_Name: WaterBall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -162,8 +185,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Radius: 0.4
+  m_Offset: {x: 0.060000002, y: -0.04}
+  m_Radius: 0.24
 --- !u!50 &5338759630541325774
 Rigidbody2D:
   serializedVersion: 5

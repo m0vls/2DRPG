@@ -11,8 +11,8 @@ public class KnightPlayer : Player
 
     [Header("Компоненты для атаки")]
     [SerializeField] private Transform attackPoint;
-    [SerializeField] private Collider2D attackCollider;
-    [SerializeField] private SpriteRenderer attackSprite;
+    [SerializeField] private Collider2D attackColliderVertical;
+    [SerializeField] private Collider2D attackColliderHorizontal;
 
     [Header("Слои")]
     [SerializeField] private LayerMask enemyLayers;
@@ -23,11 +23,10 @@ public class KnightPlayer : Player
     protected override void Awake()
     {
         base.Awake();
-        if (attackCollider != null ) 
-            attackCollider.enabled = false;
-
-        if (attackSprite != null)
-            attackSprite.enabled = false;
+        if (attackColliderVertical != null ) 
+            attackColliderVertical.enabled = false;
+        if (attackColliderHorizontal != null)
+            attackColliderHorizontal.enabled = false;
     }
 
     public override void OnStartLocalPlayer()
@@ -71,19 +70,25 @@ public class KnightPlayer : Player
         isAttacking = true;
         rb.linearVelocity = Vector2.zero;
 
-        attackSprite.enabled = true;
-        CmdExecuteAttack();
+        animator.SetFloat("Speed", 0f);
+        CmdUpdateMovingState(false);
+
+        TriggerAttackVisual("Attack");
+        CmdExecuteAttack(lastFacingDirection);
 
         yield return new WaitForSeconds(attackDuration);
 
-        attackSprite.enabled = false;
         isAttacking = false;
     }
 
     [Command]
-    private void CmdExecuteAttack()
+    private void CmdExecuteAttack(Vector2 facingDirection)
     {
-        attackCollider.enabled = true;
+        Collider2D currentCollider = (facingDirection == Vector2.up || facingDirection == Vector2.down)
+        ? attackColliderVertical
+        : attackColliderHorizontal;
+
+        currentCollider.enabled = true;
 
         ContactFilter2D filter = new ContactFilter2D();
         filter.SetLayerMask(enemyLayers);
@@ -91,7 +96,8 @@ public class KnightPlayer : Player
         filter.useTriggers = true;
 
         Collider2D[] results = new Collider2D[10];
-        int hitCount = Physics2D.OverlapCollider(attackCollider, filter, results);
+        
+        int hitCount = Physics2D.OverlapCollider(currentCollider, filter, results);
 
         Debug.Log($"[Сервер] Атака активирована. Найдено объектов: {hitCount}");
 
@@ -108,6 +114,6 @@ public class KnightPlayer : Player
             }
         }
 
-        attackCollider.enabled = false;
+        currentCollider.enabled = false;
     }
 }

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7678639804672279078}
   - component: {fileID: 9003223008710936474}
+  - component: {fileID: 6444355274226937375}
   m_Layer: 0
   m_Name: MagePlayerVisual
   m_TagString: Untagged
@@ -81,7 +82,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 90e7f93498eed8542ad9593de249c7f5, type: 3}
+  m_Sprite: {fileID: 4723107735738678597, guid: bbcd327417e580c4092dcddb172f2020, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -91,6 +92,28 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 1
+--- !u!95 &6444355274226937375
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2335374318830585851}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 1172bcaf79897394693157cdc8dc6962, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5086090432490469715
 GameObject:
   m_ObjectHideFlags: 0
@@ -301,6 +324,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  animator: {fileID: 0}
   playerSprite: {fileID: 9003223008710936474}
   invincibilityDuration: 1.5
   moveSpeed: 5

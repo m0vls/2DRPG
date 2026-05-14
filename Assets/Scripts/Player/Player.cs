@@ -6,18 +6,24 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public abstract class Player : NetworkBehaviour, IDamageable
 {
-    [Header("Кадры неуязвимости")]
+    [Header("Анимация")]
+    [SerializeField] protected Animator animator;
     [SerializeField] protected SpriteRenderer playerSprite;
+    [SerializeField] protected bool spritesFaceLeftByDefault = false;
+
+    [Header("Кадры неуязвимости")]
     [SerializeField] protected float invincibilityDuration = 1.5f;
 
     protected bool isInvincible = false;
     
-
     [Header("Передвижение игрока")]
     [SerializeField] protected float moveSpeed = 5f;
 
     [SyncVar(hook =nameof(OnDirectionChanged))]
     public Vector2 lastFacingDirection = Vector2.down;
+
+    [SyncVar(hook = nameof(OnMovingStateChanged))]
+    private bool isMoving = false;
 
     protected Rigidbody2D rb;
     protected InputSystem_Actions inputActions;
@@ -31,6 +37,7 @@ public abstract class Player : NetworkBehaviour, IDamageable
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponentInChildren<Animator>();
         rb.gravityScale = 0;
         inputActions = new InputSystem_Actions();
     }
@@ -38,6 +45,9 @@ public abstract class Player : NetworkBehaviour, IDamageable
     protected virtual void Start()
     {
         teamStateManager = TeamStateManager.Instance;
+
+        animator.SetFloat("Horizontal", lastFacingDirection.x);
+        animator.SetFloat("Vertical", lastFacingDirection.y);
     }
 
     public override void OnStartLocalPlayer()
@@ -60,6 +70,12 @@ public abstract class Player : NetworkBehaviour, IDamageable
         if (!isLocalPlayer) return;
         if (UIManager.Instance.IsPauseMenu) return;
 
+        if (isAttacking)
+        {
+            currentMovementInput = Vector2.zero;
+            return;
+        }
+
         currentMovementInput = inputActions.Player.Move.ReadValue<Vector2>();
         UpdateFacingDirection();
 
@@ -78,13 +94,47 @@ public abstract class Player : NetworkBehaviour, IDamageable
     {
         Vector2 velocity = direction.normalized * moveSpeed;
         rb.linearVelocity = velocity;
+
+        float currentSpeed = direction.magnitude;
+        animator.SetFloat("Speed", currentSpeed);
+
+        bool movingNow = currentSpeed > 0.1f;
+        if (movingNow != isMoving)
+        {
+            CmdUpdateMovingState(movingNow);
+        }
     }
 
     #region Направление игрока
     protected virtual void OnDirectionChanged(Vector2 olddir, Vector2 newdir)
     {
-        //обновление аниматора в будущем
+        if (newdir.x != 0)
+        {
+            if (spritesFaceLeftByDefault)
+            {
+                playerSprite.flipX = (newdir.x > 0);
+            }
+            else
+            {
+                playerSprite.flipX = (newdir.x < 0);
+            }
+        }
+
+        animator.SetFloat("Horizontal", newdir.x);
+        animator.SetFloat("Vertical", newdir.y);
     }
+
+    private void OnMovingStateChanged(bool oldState, bool newState)
+    {
+        animator.SetFloat("Speed", newState ? 1f : 0f);
+    }
+
+    [Command]
+    protected void CmdUpdateMovingState(bool moving)
+    {
+        isMoving = moving;
+    }
+
 
     [Command]
     protected void CmdUpdateDirection(Vector2 newDir)
@@ -119,6 +169,25 @@ public abstract class Player : NetworkBehaviour, IDamageable
 
     #region Нанесение/Получение урона
     protected abstract void PlayerAttack();
+
+    protected void TriggerAttackVisual(string triggerName = "Attack")
+    {
+        animator.SetTrigger(triggerName);
+        CmdSyncAttackVisual(triggerName);
+    }
+
+    [Command]
+    private void CmdSyncAttackVisual(string triggerName)
+    {
+        RpcSyncAttackVisual(triggerName);
+    }
+
+    [ClientRpc]
+    private void RpcSyncAttackVisual(string triggerName)
+    {
+        if (isLocalPlayer) return;
+        animator.SetTrigger(triggerName);
+    }
 
     public void TakeDamage(float damageAmount)
     {

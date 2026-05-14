@@ -61,7 +61,7 @@ public class MagePlayer : Player
 
         //Вычисляем вектор направления от точки атаки до курсора
         Vector2 direction = (mouseWorldPos - (Vector2)attackPoint.position).normalized;
-
+        TriggerAttackVisual("Attack");
         CmdFireProjectile(direction);
     }
 

@@ -14,6 +14,7 @@ public class PauseUI : MonoBehaviour
     public void Resume()
     {
         gameObject.SetActive(false);
+        UIManager.Instance.IsPauseMenu = false;
     }
 
     public void QuitToMenu()
@@ -23,7 +24,7 @@ public class PauseUI : MonoBehaviour
             NetworkManager.singleton.StopHost();
         }
         else if (NetworkClient.isConnected)
-        {
+        { 
             NetworkManager.singleton.StopClient();
         }
 
