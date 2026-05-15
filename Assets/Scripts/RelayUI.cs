@@ -1,8 +1,10 @@
 using DG.Tweening;
 using Mirror;
+using System;
 using TMPro;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
+using Unity.Services.Core.Environments;
 using UnityEngine;
 using Utp;
 
@@ -17,15 +19,33 @@ public class RelayUI : MonoBehaviour
     private UtpTransport transport;
     private bool isLocal = false;
 
-    private async void Awake()
+    async void Awake()
     {
-        await UnityServices.InitializeAsync();
-
-        if (!AuthenticationService.Instance.IsSignedIn)
+        try
         {
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            var options = new InitializationOptions();
+
+            options.SetEnvironmentName("production");
+
+            string uniqueProfile = $"Player_{Guid.NewGuid().ToString().Substring(0, 8)}";
+
+            options.SetProfile(uniqueProfile);
+
+            await UnityServices.InitializeAsync(options);
+            Debug.Log("Unity Services успешно инициализированы.");
+
+            if (!AuthenticationService.Instance.IsSignedIn)
+            {
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                Debug.Log($"Успешный вход! Мой Player ID: {AuthenticationService.Instance.PlayerId}");
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Ошибка инициализации сервисов: {e.Message}");
         }
     }
+
 
     void Start()
     {
@@ -85,7 +105,7 @@ public class RelayUI : MonoBehaviour
 
     public void JoinGame()
     {
-        string input = joinInputField.text;
+        string input = joinInputField.text.Trim();
 
         if (isLocal)
         {
@@ -99,7 +119,7 @@ public class RelayUI : MonoBehaviour
             if (string.IsNullOrEmpty(input)) return;
 
             transport.useRelay = true;
-
+            
             transport.ConfigureClientWithJoinCode(input, () => {
                 NetworkManager.singleton.StartClient();
             }, () => {
