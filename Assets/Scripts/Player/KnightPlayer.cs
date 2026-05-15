@@ -98,7 +98,7 @@ public class KnightPlayer : Player
         Collider2D[] results = new Collider2D[10];
         
         int hitCount = Physics2D.OverlapCollider(currentCollider, filter, results);
-
+        Debug.Log(currentCollider.gameObject.name);
         Debug.Log($"[Сервер] Атака активирована. Найдено объектов: {hitCount}");
 
         for (int i = 0; i < hitCount; i++)

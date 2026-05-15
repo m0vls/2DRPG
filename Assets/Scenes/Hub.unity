@@ -3758,7 +3758,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  nextSceneName: SampleScene
+  nextSceneName: Level1
   requiredPlayers: 2
 --- !u!114 &1650007332
 MonoBehaviour:
@@ -4647,8 +4647,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b987c32467ec6b04ebd8a514b09c8f7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
+  IsInputBlock: 0
+  pauseUI: {fileID: 0}
   healthBar: {fileID: 1298057569}
   defeatUI: {fileID: 1702259964}
+  fadeGroup: {fileID: 0}
 --- !u!1 &1711138669
 GameObject:
   m_ObjectHideFlags: 0
@@ -4865,7 +4868,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RelayUI
   joinInputField: {fileID: 733152485}
-  codeDisplay: {fileID: 285135109}
+  statusText: {fileID: 0}
+  inputPlaceholder: {fileID: 0}
+  connectButtonText: {fileID: 0}
 --- !u!1 &1740722501
 GameObject:
   m_ObjectHideFlags: 0

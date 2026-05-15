@@ -14,7 +14,7 @@ public class PauseUI : MonoBehaviour
     public void Resume()
     {
         gameObject.SetActive(false);
-        UIManager.Instance.IsPauseMenu = false;
+        UIManager.Instance.IsInputBlock = false;
     }
 
     public void QuitToMenu()

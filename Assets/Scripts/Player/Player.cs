@@ -68,7 +68,7 @@ public abstract class Player : NetworkBehaviour, IDamageable
     protected virtual void Update()
     {
         if (!isLocalPlayer) return;
-        if (UIManager.Instance.IsPauseMenu) return;
+        if (UIManager.Instance.IsInputBlock) return;
 
         if (isAttacking)
         {

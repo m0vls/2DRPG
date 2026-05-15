@@ -1,15 +1,20 @@
+using DG.Tweening;
+using System.Security.Policy;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
-    [HideInInspector] public bool IsPauseMenu = false;
+    [HideInInspector] public bool IsInputBlock = false;
 
     [Header("Контроллеры UI")]
     [SerializeField] private PauseUI pauseUI;
     [SerializeField] private HealthBar healthBar;
     //[SerializeField] private ManaBar manaBar;
     [SerializeField] private DefeatUI defeatUI;
+
+    [Header("Настройки Fade")]
+    [SerializeField] private CanvasGroup fadeGroup;
 
     private InputSystem_Actions uiActions;
 
@@ -40,12 +45,21 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public Tween FadeScreen(float targetAlpha, float duration)
+    {
+        if (fadeGroup == null) return null;
+
+        // Убиваем текущую анимацию, если она идет, чтобы не было конфликтов
+        fadeGroup.DOKill();
+        return fadeGroup.DOFade(targetAlpha, duration);
+    }
+
     public void TogglePause()
     {
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "MainMenu") return;
 
         pauseUI.Toggle();
-        IsPauseMenu = !IsPauseMenu;
+        IsInputBlock = !IsInputBlock;
     }
 
     public void SetRoomCode(string roomCode)
