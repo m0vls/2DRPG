@@ -5,7 +5,6 @@ using UnityEngine;
 public class KnightPlayer : Player
 {
     [Header("Настройки атаки")]
-    [SerializeField] private float attackDamage = 15;
     [SerializeField] private float attackCooldown = 1f;
     [SerializeField] private float attackDuration = 0.2f;
 
@@ -109,8 +108,8 @@ public class KnightPlayer : Player
 
             if (enemyCollider.TryGetComponent<IDamageable>(out var damageable))
             {
-                damageable.TakeDamage(attackDamage);
-                Debug.Log($"[Сервер] Рыцарь ударил {enemyCollider.name} на {attackDamage} урона");
+                damageable.TakeDamage(CurrentStats.attackPower);
+                Debug.Log($"[Сервер] Рыцарь ударил {enemyCollider.name} на {CurrentStats.attackPower} урона");
             }
         }
 

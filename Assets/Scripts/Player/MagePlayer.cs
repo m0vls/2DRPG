@@ -74,7 +74,7 @@ public class MagePlayer : Player
 
         GameObject projectileInstance = Instantiate(projectilePrefab, attackPoint.position, Quaternion.identity);
 
-        projectileInstance.GetComponent<MageProjectile>().Setup(direction);
+        projectileInstance.GetComponent<MageProjectile>().Setup(direction, CurrentStats.attackPower);
 
         NetworkServer.Spawn(projectileInstance);
     }

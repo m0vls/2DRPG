@@ -3759,7 +3759,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   nextSceneName: Level1
-  requiredPlayers: 2
+  requiredPlayers: 1
 --- !u!114 &1650007332
 MonoBehaviour:
   m_ObjectHideFlags: 0

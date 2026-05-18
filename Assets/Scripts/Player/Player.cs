@@ -1,11 +1,18 @@
 using Mirror;
 using System.Collections;
 using Unity.Cinemachine;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public abstract class Player : NetworkBehaviour, IDamageable
 {
+    [Header("Характеристики")]
+    [SerializeField] private CharacterStats baseStats;
+
+    [SyncVar] public CharacterStats CurrentStats;
+
     [Header("Анимация")]
     [SerializeField] protected Animator animator;
     [SerializeField] protected SpriteRenderer playerSprite;
@@ -17,8 +24,6 @@ public abstract class Player : NetworkBehaviour, IDamageable
     protected bool isInvincible = false;
     
     [Header("Передвижение игрока")]
-    [SerializeField] protected float moveSpeed = 5f;
-
     [SyncVar(hook =nameof(OnDirectionChanged))]
     public Vector2 lastFacingDirection = Vector2.down;
 
@@ -33,7 +38,6 @@ public abstract class Player : NetworkBehaviour, IDamageable
 
     protected TeamStateManager teamStateManager;
 
-    
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -48,6 +52,12 @@ public abstract class Player : NetworkBehaviour, IDamageable
 
         animator.SetFloat("Horizontal", lastFacingDirection.x);
         animator.SetFloat("Vertical", lastFacingDirection.y);
+    }
+
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        CurrentStats = baseStats;
     }
 
     public override void OnStartLocalPlayer()
@@ -92,7 +102,7 @@ public abstract class Player : NetworkBehaviour, IDamageable
 
     private void ApplyMovement(Vector2 direction)
     {
-        Vector2 velocity = direction.normalized * moveSpeed;
+        Vector2 velocity = direction.normalized * CurrentStats.moveSpeed;
         rb.linearVelocity = velocity;
 
         float currentSpeed = direction.magnitude;
@@ -189,21 +199,23 @@ public abstract class Player : NetworkBehaviour, IDamageable
         animator.SetTrigger(triggerName);
     }
 
-    public void TakeDamage(float damageAmount)
+    public void TakeDamage(float rawDamage)
     {
         if (isInvincible || !isLocalPlayer)
         {
             return;
         }
-        CmdTakeDamage(damageAmount);
+        CmdTakeDamage(rawDamage);
 
         StartCoroutine(InvincibilityRoutine());
     }
 
     [Command]
-    private void CmdTakeDamage(float damage)
+    private void CmdTakeDamage(float rawDamage)
     {
-        teamStateManager.TakeTeamDamage(damage);
+        float finalDamage = Mathf.Max(1f, rawDamage - CurrentStats.defence);
+
+        teamStateManager.TakeTeamDamage(finalDamage);
     }
 
     private IEnumerator InvincibilityRoutine()

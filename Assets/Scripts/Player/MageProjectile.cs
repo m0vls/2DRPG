@@ -21,9 +21,11 @@ public class MageProjectile : NetworkBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public void Setup(Vector2 direction)
+    public void Setup(Vector2 direction, float damage)
     {
         rb.linearVelocity = direction * speed;
+
+        this.damage = damage;
 
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0f, 0f, angle);
@@ -38,6 +40,13 @@ public class MageProjectile : NetworkBehaviour
         {
             damageable.TakeDamage(damage);
 
+            SpawnManaShard();
+
+            NetworkServer.Destroy(gameObject);
+        }
+
+        if(collision.gameObject.layer == LayerMask.NameToLayer("Wall"))
+        {
             SpawnManaShard();
 
             NetworkServer.Destroy(gameObject);

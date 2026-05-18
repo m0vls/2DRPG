@@ -5,10 +5,12 @@ public enum RoomType { Start, Normal, Boss, DeadEnd }
 public class RoomData : MonoBehaviour
 {
     public RoomType roomType;
+
+    public Transform[] enemySpawnPoints;
+    public Transform bossSpawnPoint;
     public Vector2Int GridPosition { get; set; }
 
     [Header("Двери (Триггеры)")]
-    // Перетащи сюда объекты с компонентом DoorTransition из префаба
     public DoorTransition topDoor;
     public DoorTransition bottomDoor;
     public DoorTransition leftDoor;
@@ -28,21 +30,24 @@ public class RoomData : MonoBehaviour
     // Проверка: есть ли у этого префаба выход в конкретную сторону
     public bool HasExit(Vector2Int direction)
     {
-        if (direction == Vector2Int.up) return topDoor != null;
-        if (direction == Vector2Int.down) return bottomDoor != null;
-        if (direction == Vector2Int.left) return leftDoor != null;
-        if (direction == Vector2Int.right) return rightDoor != null;
-        return false;
+         return GetExit(direction) != null;
+    }
+
+    public DoorTransition GetExit(Vector2Int direction)
+    {
+        if (direction == Vector2Int.up) return topDoor;
+        if (direction == Vector2Int.down) return bottomDoor;
+        if (direction == Vector2Int.left) return leftDoor;
+        if (direction == Vector2Int.right) return rightDoor;
+        return null;
     }
 
     // Получаем точку спавна (куда игрок приземлится после перехода)
     public Transform GetLandingPoint(Vector2Int arrivalDirection)
     {
-        // Если мы пришли СНИЗУ (up), то должны оказаться у НИЖНЕЙ двери
-        if (arrivalDirection == Vector2Int.up) return bottomDoor.spawnPoint;
-        if (arrivalDirection == Vector2Int.down) return topDoor.spawnPoint;
-        if (arrivalDirection == Vector2Int.left) return rightDoor.spawnPoint;
-        if (arrivalDirection == Vector2Int.right) return leftDoor.spawnPoint;
-        return transform;
+        DoorTransition dt = GetExit(-arrivalDirection);
+        if (dt != null) return dt.spawnPoint;
+        
+        return null;
     }
 }

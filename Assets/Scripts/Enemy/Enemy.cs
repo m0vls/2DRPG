@@ -11,19 +11,6 @@ public abstract class Enemy : NetworkBehaviour, IDamageable
     [SerializeField] protected float maxHealth = 50;
     [SerializeField] protected float detectionRange = 2f;
 
-    //public virtual int MaxHealth 
-    //{ 
-    //    get
-    //    {
-    //        return maxHealth;
-    //    }
-    //    [Server]
-    //    set
-    //    {
-    //        maxHealth = value;
-    //    }
-    //}
-
     [SyncVar] [SerializeField] protected float currentHealth;
 
     protected virtual void Awake()

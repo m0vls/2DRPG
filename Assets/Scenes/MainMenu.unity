@@ -7127,8 +7127,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d4f9593ba7f845458730213887b5758, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UtpTransport::Utp.UtpTransport
-  Port: 0
-  LoggerLevel: 4
+  Port: 7777
+  LoggerLevel: 3
   TimeoutMS: 5000
   useRelay: 0
 --- !u!114 &655502824

@@ -1,8 +1,10 @@
 using DG.Tweening;
 using Mirror;
+using NavMeshPlus.Components;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class DungeonMaster : NetworkBehaviour
 {
@@ -16,8 +18,17 @@ public class DungeonMaster : NetworkBehaviour
     [SerializeField] private float roomSpacing = 60f;
     [SerializeField] private int maxRooms = 12;
 
+    [Header("Враги")]
+    [SerializeField] private List<GameObject> enemyPrefabs;
+    [SerializeField] private GameObject bossPrefab;
+    [SerializeField, Range(0f, 1f)] private float enemySpawnChance = 0.6f;
+
+    [Header("Навигация")]
+    [SerializeField] private NavMeshSurface navMeshSurface;
+
     private Dictionary<Vector2Int, RoomData> spawnedRooms = new Dictionary<Vector2Int, RoomData>();
     private Queue<Vector2Int> roomsToGrow = new Queue<Vector2Int>();
+    private bool bossSpawned = false;
 
     [SyncVar(hook = nameof(OnSeedChanged))]
     private int dungeonSeed;
@@ -27,6 +38,7 @@ public class DungeonMaster : NetworkBehaviour
     public override void OnStartServer()
     {
         dungeonSeed = Random.Range(10000, 99999);
+        Debug.Log($"Сид подземелья: {dungeonSeed}");
         GenerateDungeon(dungeonSeed);
     }
 
@@ -47,7 +59,7 @@ public class DungeonMaster : NetworkBehaviour
     {
         // Здесь твоя логика с DOTween и UIManager из DoorTransition
 
-        float duration = 0.4f;
+        float duration = 0.3f;
         UIManager.Instance.FadeScreen(1f, duration).OnComplete(() => {
         UIManager.Instance.IsInputBlock = true;
 
@@ -69,15 +81,14 @@ public class DungeonMaster : NetworkBehaviour
     {
         Random.InitState(seed);
         ClearDungeon();
+        bossSpawned = false;
 
-        // 1. Стартовая комната (0,0)
         SpawnRoom(Vector2Int.zero, startRoomPrefab);
         roomsToGrow.Enqueue(Vector2Int.zero);
 
         int count = 1;
         Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
 
-        // 2. Основная генерация
         while (roomsToGrow.Count > 0 && count < maxRooms)
         {
             Vector2Int currentPos = roomsToGrow.Dequeue();
@@ -85,40 +96,104 @@ public class DungeonMaster : NetworkBehaviour
 
             foreach (var dir in directions)
             {
+                Vector2Int nextPos = currentPos + dir;
+                if (!currentRoom.HasExit(dir) || spawnedRooms.ContainsKey(nextPos))
+                    continue;
+                
+
                 if (count >= maxRooms) break;
 
+                GameObject prefabToSpawn = null;
+
+                // Условие для Босса: если это последняя комната и мы идем ВВЕРХ
+                if (count == maxRooms - 1 && dir == Vector2Int.up && !bossSpawned)
+                {
+                    prefabToSpawn = bossRoomPrefab;
+                    bossSpawned = true;
+                }
+                else
+                {
+                    // Ищем обычную комнату, у которой есть вход с нужной стороны
+                    var valid = normalRoomPrefabs.Where(p => p.GetComponent<RoomData>().HasExit(-dir)).ToList();
+                    if (valid.Count > 0) prefabToSpawn = valid[Random.Range(0, valid.Count)];
+                }
+
+                if (prefabToSpawn != null)
+                {
+                    SpawnRoom(nextPos, prefabToSpawn);
+                    roomsToGrow.Enqueue(nextPos);
+                    count++;
+                }
+            }
+        }
+
+        // Если босс так и не заспавнился (не было хода вверх), пробуем форсировать его на любом свободном верхнем выходе
+        if (!bossSpawned) ForceSpawnBoss();
+
+        FinalizeDeadEnds();
+
+        foreach (var room in spawnedRooms)
+        {
+            Vector2Int currentPos = room.Key;
+            RoomData currentRoom = room.Value;
+
+            foreach (var dir in directions)
+            {
                 Vector2Int nextPos = currentPos + dir;
 
-                // Если в текущей комнате есть дверь В ЭТУ сторону И там еще нет комнаты
-                if (currentRoom.HasExit(dir) && !spawnedRooms.ContainsKey(nextPos))
+                // ПРОВЕРКА: Если комната там уже создана другой веткой генерации
+                if (spawnedRooms.ContainsKey(nextPos))
                 {
-                    GameObject prefab = GetCompatiblePrefab(dir, count == maxRooms - 1);
-                    if (prefab != null)
+                    RoomData neighborRoom = spawnedRooms[nextPos];
+                    // Если у соседа нет ответного входа с нашей стороны (-dir)
+                    if (!neighborRoom.HasExit(-dir))
                     {
-                        SpawnRoom(nextPos, prefab);
-                        roomsToGrow.Enqueue(nextPos);
-                        count++;
+                        DoorTransition door = currentRoom.GetExit(dir);
+                        if (door != null)
+                        {
+                            Collider2D col = door.GetComponent<Collider2D>();
+                            if (col != null) col.isTrigger = false; // Закрываем проход физически
+                        }
                     }
                 }
             }
         }
 
-        // 3. Закрываем все висящие выходы тупиками
-        FinalizeDeadEnds();
+        if (isServer)
+        {
+            CompressAllDungeonTilemaps();
+
+            navMeshSurface.BuildNavMesh();
+
+            PopulateDungeon();
+        }
     }
 
-    private GameObject GetCompatiblePrefab(Vector2Int moveDir, bool isBoss)
+    private void CompressAllDungeonTilemaps()
     {
-        if (isBoss) return bossRoomPrefab;
+        Tilemap[] allTilemaps = FindObjectsByType<Tilemap>(FindObjectsSortMode.None);
 
-        // Нам нужен вход с противоположной стороны (если идем Вверх, нужен вход Снизу)
-        Vector2Int requiredEntry = -moveDir;
+        foreach (Tilemap tilemap in allTilemaps)
+        {
+            tilemap.CompressBounds();
+        }
+    }
 
-        var validPrefabs = normalRoomPrefabs
-            .Where(p => p.GetComponent<RoomData>().HasExit(requiredEntry))
-            .ToList();
-
-        return validPrefabs.Count > 0 ? validPrefabs[Random.Range(0, validPrefabs.Count)] : null;
+    private void ForceSpawnBoss()
+    {
+        foreach (var room in spawnedRooms.Values.ToList())
+        {
+            if (room.HasExit(Vector2Int.up))
+            {
+                Vector2Int nextPos = room.GridPosition + Vector2Int.up;
+                if (!spawnedRooms.ContainsKey(nextPos))
+                {
+                    SpawnRoom(nextPos, bossRoomPrefab);
+                    bossSpawned = true;
+                    return;
+                }
+            }
+        }
     }
 
     private void FinalizeDeadEnds()
@@ -157,5 +232,48 @@ public class DungeonMaster : NetworkBehaviour
         foreach (var room in spawnedRooms.Values) if (room) Destroy(room.gameObject);
         spawnedRooms.Clear();
         roomsToGrow.Clear();
+    }
+
+    [Server]
+    private void PopulateDungeon()
+    {
+        foreach (var room in spawnedRooms.Values)
+        {
+            // 1. Спавн обычных врагов в обычных комнатах и тупиках
+            if (room.roomType == RoomType.Normal || room.roomType == RoomType.DeadEnd)
+            {
+                if (room.enemySpawnPoints == null || room.enemySpawnPoints.Length == 0) continue;
+
+                foreach (Transform spawnPoint in room.enemySpawnPoints)
+                {
+                    // Проверяем шанс спавна (чтобы комнаты не всегда были забиты битком)
+                    if (Random.value <= enemySpawnChance)
+                    {
+                        // Выбираем случайного врага из списка
+                        GameObject randomEnemyPrefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Count)];
+
+                        // Создаем объект на сервере
+                        GameObject enemyInstance = Instantiate(randomEnemyPrefab, spawnPoint.position, Quaternion.identity);
+
+                        // Регистрируем объект в сети
+                        NetworkServer.Spawn(enemyInstance);
+                    }
+                }
+            }
+
+            // 2. Спавн Босса в комнате босса
+            else if (room.roomType == RoomType.Boss)
+            {
+                if (bossPrefab != null && room.bossSpawnPoint != null)
+                {
+                    GameObject bossInstance = Instantiate(bossPrefab, room.bossSpawnPoint.position, Quaternion.identity);
+                    NetworkServer.Spawn(bossInstance);
+                }
+                else
+                {
+                    Debug.LogWarning("[DungeonMaster] Не назначен префаб босса или точка спавна в комнате босса!");
+                }
+            }
+        }
     }
 }

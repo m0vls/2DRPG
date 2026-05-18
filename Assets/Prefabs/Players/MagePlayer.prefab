@@ -324,10 +324,20 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  baseStats:
+    attackPower: 25
+    defence: 0
+    moveSpeed: 5
+    critChance: 0
+  CurrentStats:
+    attackPower: 0
+    defence: 0
+    moveSpeed: 0
+    critChance: 0
   animator: {fileID: 0}
   playerSprite: {fileID: 9003223008710936474}
+  spritesFaceLeftByDefault: 0
   invincibilityDuration: 1.5
-  moveSpeed: 5
   lastFacingDirection: {x: 0, y: -1}
   maxAmmo: 5
   currentAmmo: 5

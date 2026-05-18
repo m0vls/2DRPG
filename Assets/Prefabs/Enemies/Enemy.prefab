@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Mirror.Components::Mirror.NetworkTransformReliable
   syncMethod: 0
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 5000753818460044524}
@@ -194,7 +194,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   maxHealth: 50
-  detectionRange: 2
+  detectionRange: 4
   currentHealth: 0
   dashSpeed: 6
   dashDuration: 0.5
@@ -214,7 +214,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6423b97cf5691c842a4ee66c20f40b1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyTouchDamage
-  damage: 10
+  damage: 15
 --- !u!1 &7351968220585028689
 GameObject:
   m_ObjectHideFlags: 0
