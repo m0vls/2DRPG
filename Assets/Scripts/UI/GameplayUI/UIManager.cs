@@ -9,9 +9,10 @@ public class UIManager : MonoBehaviour
 
     [Header("Контроллеры UI")]
     [SerializeField] private PauseUI pauseUI;
+    [SerializeField] private DefeatUI defeatUI;
+    [SerializeField] private SelectClassUI selectClassUI;
     [SerializeField] private HealthBar healthBar;
     //[SerializeField] private ManaBar manaBar;
-    [SerializeField] private DefeatUI defeatUI;
 
     [Header("Настройки Fade")]
     [SerializeField] private CanvasGroup fadeGroup;
@@ -75,10 +76,20 @@ public class UIManager : MonoBehaviour
     {
         healthBar.gameObject.SetActive(true);
     }
+    public void ToggleSelectUI()
+    {
+        GameObject go = selectClassUI.gameObject;
+        go.SetActive(!go.activeSelf);
+    }
 
     public void ShowDefeat()
     {
         defeatUI.ShowDefeatScreen();
+    }
+
+    public void HideGameplayUI()
+    {
+        healthBar.gameObject.SetActive(false);
     }
 
     public void UpdateHealthUI(float health)

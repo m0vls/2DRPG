@@ -70,6 +70,12 @@ public abstract class Player : NetworkBehaviour, IDamageable
         }
     }
 
+    public override void OnStopLocalPlayer()
+    {
+        base.OnStopLocalPlayer();
+        UIManager.Instance.HideGameplayUI();
+    }
+
     protected virtual void OnDisable()
     {
         inputActions.Player.Disable();

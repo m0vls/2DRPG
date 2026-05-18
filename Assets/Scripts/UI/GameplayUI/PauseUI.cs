@@ -27,7 +27,7 @@ public class PauseUI : MonoBehaviour
         { 
             NetworkManager.singleton.StopClient();
         }
-
+        UIManager.Instance.IsInputBlock = false;
         gameObject.SetActive(false);
     }
 

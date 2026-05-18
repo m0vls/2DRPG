@@ -11,24 +11,11 @@ public class TeamStateManager : NetworkBehaviour
     [SyncVar(hook = nameof(OnHealthChanged))]
     public float teamHealth = 100;
 
-    //public UnityEvent<float> OnHealthUpdated;
-
     private bool isGameOver = false;
-
-    //[SerializeField] private DefeatUI defeatUI;
 
     public void Awake()
     {
         Instance = this;
-    }
-
-    private async void Start()
-    {
-        await UnityServices.InitializeAsync();
-        if (!AuthenticationService.Instance.IsSignedIn)
-        {
-            await AuthenticationService.Instance.SignInAnonymouslyAsync();
-        }
     }
 
     public override void OnStartServer()
@@ -37,14 +24,25 @@ public class TeamStateManager : NetworkBehaviour
 
         RPGNetworkManager netManager = (RPGNetworkManager)NetworkManager.singleton;
         teamHealth = netManager.teamHealth;
+        isGameOver = false;
+    }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.UpdateHealthUI(teamHealth);
+        }
     }
 
     [Server]
     public void TakeTeamDamage(float damageAmount)
     {
         if (isGameOver) return;
-        
+
+        Debug.Log($"Нанесено урона: {damageAmount}");
+
         teamHealth -= damageAmount;
 
         RPGNetworkManager netManager = (RPGNetworkManager)NetworkManager.singleton;
@@ -55,13 +53,11 @@ public class TeamStateManager : NetworkBehaviour
             teamHealth = 0;
             netManager.teamHealth = 0;
             isGameOver = true;
-            //RpcGameOver();
         }
     }
 
     private void OnHealthChanged(float oldHealth, float newHealth)
     {
-        //OnHealthUpdated?.Invoke(newHealth);
         UIManager.Instance?.UpdateHealthUI(newHealth);
 
         if (newHealth <= 0)
@@ -69,11 +65,4 @@ public class TeamStateManager : NetworkBehaviour
             UIManager.Instance?.ShowDefeat();
         }
     }
-
-    //[ClientRpc]
-    //private void RpcGameOver()
-    //{
-    //    Debug.Log("Вся команда погибла!");
-    //    defeatUI.ShowDefeatScreen();
-    //}
 }

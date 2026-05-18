@@ -85,6 +85,7 @@ public class RelayUI : MonoBehaviour
         if (isLocal)
         {
             transport.useRelay = false;
+            transport.Port = 7777;
             NetworkManager.singleton.StartHost();
             
             UIManager.Instance.SetRoomCode("LAN Server");
@@ -111,6 +112,7 @@ public class RelayUI : MonoBehaviour
         {
             // Локальное подключение
             transport.useRelay = false;
+            transport.Port = 7777;
             NetworkManager.singleton.networkAddress = string.IsNullOrEmpty(input) ? "localhost" : input;
             NetworkManager.singleton.StartClient();
         }

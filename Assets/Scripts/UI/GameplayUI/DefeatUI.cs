@@ -6,8 +6,8 @@ public class DefeatUI : MonoBehaviour
 {
     [Header("Настройки UI")]
     [SerializeField] private CanvasGroup canvasGroup;
-    [SerializeField] private float fadeDuration = 3f; // Скорость появления
-    [SerializeField] private float waitBeforeHub = 2f; // Пауза после появления
+    [SerializeField] private float fadeDuration = 3f;
+    [SerializeField] private float waitBeforeHub = 2f;
 
     private void Awake()
     {
@@ -22,7 +22,8 @@ public class DefeatUI : MonoBehaviour
 
     private IEnumerator DefeatSequence()
     {
-        //Медленное появление (Fade In)
+        UIManager.Instance.IsInputBlock = true;
+        //Медленное появление
         float timer = 0;
         while (timer < fadeDuration)
         {
@@ -33,14 +34,24 @@ public class DefeatUI : MonoBehaviour
 
         canvasGroup.alpha = 1;
 
-        // 2. Ждем немного, чтобы игроки успели осознать потерю
         yield return new WaitForSeconds(waitBeforeHub);
 
-        // 3. Только сервер инициирует смену сцены обратно в Хаб
         if (NetworkServer.active)
         {
-            // Используем имя вашей сцены хаба
-            NetworkManager.singleton.ServerChangeScene("Hub");
+            //NetworkManager.singleton.ServerChangeScene("Hub");
+            //временно отключаем от сервера
+            if (NetworkServer.active && NetworkClient.isConnected)
+            {
+                NetworkManager.singleton.StopHost();
+            }
+            else if (NetworkClient.isConnected)
+            {
+                NetworkManager.singleton.StopClient();
+            }
         }
+
+        canvasGroup.alpha = 0;
+        canvasGroup.gameObject.SetActive(false);
+        UIManager.Instance.IsInputBlock = false;
     }
 }
