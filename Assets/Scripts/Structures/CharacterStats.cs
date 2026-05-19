@@ -4,7 +4,7 @@ using System;
 public struct CharacterStats
 {
     public float attackPower;
-    public float defence;
+    public float defense;
     public float moveSpeed;
     public float critChance;
 }

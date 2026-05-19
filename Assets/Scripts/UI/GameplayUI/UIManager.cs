@@ -11,7 +11,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private PauseUI pauseUI;
     [SerializeField] private DefeatUI defeatUI;
     [SerializeField] private SelectClassUI selectClassUI;
-    [SerializeField] private HealthBar healthBar;
+    [SerializeField] private PlayerStatusBar playerStatusBar;
     //[SerializeField] private ManaBar manaBar;
 
     [Header("Настройки Fade")]
@@ -70,11 +70,11 @@ public class UIManager : MonoBehaviour
 
     public void ShowKnightUI()
     {
-        healthBar.gameObject.SetActive(true);
+        playerStatusBar.gameObject.SetActive(true);
     }
     public void ShowMageUI()
     {
-        healthBar.gameObject.SetActive(true);
+        playerStatusBar.gameObject.SetActive(true);
     }
     public void ToggleSelectUI()
     {
@@ -89,11 +89,16 @@ public class UIManager : MonoBehaviour
 
     public void HideGameplayUI()
     {
-        healthBar.gameObject.SetActive(false);
+        playerStatusBar.gameObject.SetActive(false);
     }
 
     public void UpdateHealthUI(float health)
     {
-        healthBar.UpdateBarUI(health);
+        playerStatusBar.UpdateHealthBarUI(health);
+    }
+
+    public void UpdateXPBarUI(float currentXp, float xpToNextLevel)
+    {
+        playerStatusBar.UpdateXpBarUI(currentXp, xpToNextLevel);
     }
 }

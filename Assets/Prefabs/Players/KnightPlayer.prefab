@@ -268,14 +268,18 @@ MonoBehaviour:
   syncInterval: 0
   baseStats:
     attackPower: 15
-    defence: 5
+    defense: 5
     moveSpeed: 4
     critChance: 0
   CurrentStats:
     attackPower: 0
-    defence: 0
+    defense: 0
     moveSpeed: 0
     critChance: 0
+  availableSkillPoints: 0
+  attackUpgradeStep: 5
+  defenseUpgradeStep: 2
+  moveSpeedUpgradeStep: 0.5
   animator: {fileID: 0}
   playerSprite: {fileID: 7951524408377442911}
   spritesFaceLeftByDefault: 1

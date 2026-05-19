@@ -23,7 +23,7 @@ public class SlimeEnemy : Enemy
         while (true)
         {
             GameObject target = TargetNeariestPlayer();
-            
+
             if (target != null)
             {
                 float distance = Vector2.Distance(transform.position, target.transform.position);
@@ -68,7 +68,7 @@ public class SlimeEnemy : Enemy
             {
                 yield return new WaitForSeconds(pauseDuration);
             }
-            
+
         }
     }
 }

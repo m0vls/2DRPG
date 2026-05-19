@@ -10,8 +10,9 @@ public abstract class Enemy : NetworkBehaviour, IDamageable
 
     [SerializeField] protected float maxHealth = 50;
     [SerializeField] protected float detectionRange = 2f;
+    [SerializeField] protected float xpReward = 5f;
 
-    [SyncVar] [SerializeField] protected float currentHealth;
+    [SyncVar][SerializeField] protected float currentHealth;
 
     protected virtual void Awake()
     {
@@ -27,6 +28,15 @@ public abstract class Enemy : NetworkBehaviour, IDamageable
         StartMovement();
     }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        if (!isServer)
+        {
+            agent.enabled = false;
+        }
+    }
+
     protected abstract void StartMovement();
 
     [Server]
@@ -35,6 +45,8 @@ public abstract class Enemy : NetworkBehaviour, IDamageable
         currentHealth -= damageAmount;
         if (currentHealth <= 0)
         {
+            TeamStateManager.Instance.AddXP(xpReward);
+
             NetworkServer.Destroy(gameObject);
         }
     }

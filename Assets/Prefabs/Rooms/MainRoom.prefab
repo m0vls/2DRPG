@@ -3243,6 +3243,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RoomData
   roomType: 0
+  enemySpawnPoints: []
+  bossSpawnPoint: {fileID: 0}
   topDoor: {fileID: 2402439633660536251}
   bottomDoor: {fileID: 0}
   leftDoor: {fileID: 8527276454299241540}

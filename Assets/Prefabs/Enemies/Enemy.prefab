@@ -195,6 +195,7 @@ MonoBehaviour:
   syncInterval: 0
   maxHealth: 50
   detectionRange: 4
+  xpReward: 15
   currentHealth: 0
   dashSpeed: 6
   dashDuration: 0.5

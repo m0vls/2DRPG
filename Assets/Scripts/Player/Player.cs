@@ -1,9 +1,7 @@
 using Mirror;
 using System.Collections;
 using Unity.Cinemachine;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
-using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public abstract class Player : NetworkBehaviour, IDamageable
@@ -11,7 +9,14 @@ public abstract class Player : NetworkBehaviour, IDamageable
     [Header("Характеристики")]
     [SerializeField] private CharacterStats baseStats;
 
-    [SyncVar] public CharacterStats CurrentStats;
+    [SyncVar(hook = nameof(OnStatsChanged))] public CharacterStats CurrentStats;
+
+    [SyncVar(hook = nameof(OnSkillPointsChanged))] public int availableSkillPoints = 0;
+
+    // Настройки того, сколько дает 1 вложенное очко
+    [SerializeField] private float attackUpgradeStep = 5f;
+    [SerializeField] private float defenseUpgradeStep = 2f;
+    [SerializeField] private float moveSpeedUpgradeStep = 0.5f;
 
     [Header("Анимация")]
     [SerializeField] protected Animator animator;
@@ -219,7 +224,7 @@ public abstract class Player : NetworkBehaviour, IDamageable
     [Command]
     private void CmdTakeDamage(float rawDamage)
     {
-        float finalDamage = Mathf.Max(1f, rawDamage - CurrentStats.defence);
+        float finalDamage = Mathf.Max(1f, rawDamage - CurrentStats.defense);
 
         teamStateManager.TakeTeamDamage(finalDamage);
     }
@@ -241,5 +246,71 @@ public abstract class Player : NetworkBehaviour, IDamageable
 
         isInvincible = false;
     }
+    #endregion
+
+    #region Прокачка
+
+    [Server]
+    public void AddSkillPoint()
+    {
+        availableSkillPoints++;
+        // Здесь можно отправить ClientRpc, чтобы показать уведомление "+1 Очко навыков!"
+    }
+
+    private void OnSkillPointsChanged(int oldPoints, int newPoints)
+    {
+        if (isLocalPlayer && UpgradeUI.Instance != null)
+        {
+            UpgradeUI.Instance.UpdateSkillPointsText(newPoints);
+        }
+    }
+
+    private void OnStatsChanged(CharacterStats oldStats, CharacterStats newStats)
+    {
+        if (isLocalPlayer && UpgradeUI.Instance != null)
+        {
+            UpgradeUI.Instance.UpdateStatsDisplay(newStats);
+        }
+    }
+
+    [Command]
+    public void CmdUpgradeAttack()
+    {
+        if (availableSkillPoints <= 0) return;
+
+        availableSkillPoints--;
+
+        // Копируем, меняем, перезаписываем (правило Mirror для структур)
+        CharacterStats tempStats = CurrentStats;
+        tempStats.attackPower += attackUpgradeStep;
+        CurrentStats = tempStats;
+
+        Debug.Log($"[Сервер] Игрок прокачал Атаку: {CurrentStats.attackPower}");
+    }
+
+    [Command]
+    public void CmdUpgradeDefense()
+    {
+        if (availableSkillPoints <= 0) return;
+
+        availableSkillPoints--;
+
+        CharacterStats tempStats = CurrentStats;
+        tempStats.defense += defenseUpgradeStep;
+        CurrentStats = tempStats;
+    }
+
+    [Command]
+    public void CmdUpgradeMoveSpeed()
+    {
+        if (availableSkillPoints <= 0) return;
+
+        availableSkillPoints--;
+
+        CharacterStats tempStats = CurrentStats;
+        tempStats.moveSpeed += moveSpeedUpgradeStep;
+        CurrentStats = tempStats;
+    }
+
     #endregion
 }
