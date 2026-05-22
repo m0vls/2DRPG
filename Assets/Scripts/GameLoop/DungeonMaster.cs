@@ -105,7 +105,6 @@ public class DungeonMaster : NetworkBehaviour
 
                 GameObject prefabToSpawn = null;
 
-                // Условие для Босса: если это последняя комната и мы идем ВВЕРХ
                 if (count == maxRooms - 1 && dir == Vector2Int.up && !bossSpawned)
                 {
                     prefabToSpawn = bossRoomPrefab;
@@ -113,7 +112,6 @@ public class DungeonMaster : NetworkBehaviour
                 }
                 else
                 {
-                    // Ищем обычную комнату, у которой есть вход с нужной стороны
                     var valid = normalRoomPrefabs.Where(p => p.GetComponent<RoomData>().HasExit(-dir)).ToList();
                     if (valid.Count > 0) prefabToSpawn = valid[Random.Range(0, valid.Count)];
                 }

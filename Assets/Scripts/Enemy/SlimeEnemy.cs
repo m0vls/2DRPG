@@ -26,7 +26,8 @@ public class SlimeEnemy : Enemy
 
             if (target != null)
             {
-                float distance = Vector2.Distance(transform.position, target.transform.position);
+                Transform playerPoint = target.GetComponent<Player>().targetEnemyPoint;
+                float distance = Vector2.Distance(transform.position, playerPoint.position);
 
                 if (distance < detectionRange)
                 {
@@ -38,19 +39,21 @@ public class SlimeEnemy : Enemy
 
                     while (timer > 0)
                     {
-                        agent.SetDestination(target.transform.position);
+                        agent.SetDestination(playerPoint.position);
                         yield return new WaitForSeconds(0.1f);
                         timer -= 0.1f;
                     }
 
                     //Рывок
+                    if (animator != null) animator.SetBool("isAttack", true);
                     agent.speed = dashSpeed;
                     agent.acceleration = 100f;
-                    agent.SetDestination(target.transform.position);
+                    agent.SetDestination(playerPoint.position);
 
                     yield return new WaitForSeconds(dashDuration);
 
                     //Остановка
+                    if (animator != null) animator.SetBool("isAttack", false);
                     agent.speed = afterDashSpeed;
                     agent.velocity = Vector3.zero;
                     agent.ResetPath();

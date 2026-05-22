@@ -26,13 +26,32 @@ public class MainMenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (isImage) gameObject.GetComponent<Image>().DOColor(Color.white, 0.2f).SetEase(Ease.OutQuad);
-        else gameObject.GetComponentInChildren<TextMeshProUGUI>().DOColor(Color.white, 0.2f).SetEase(Ease.OutQuad);
-        transform.DOScale(initialScale, 0.1f).SetEase(Ease.OutQuad);
+        ResetToDefault(0.2f);
+    }
+
+    private void OnDisable()
+    {
+        ResetToDefault(0f);
     }
 
     private void OnDestroy()
     {
         transform.DOKill();
+    }
+
+    private void ResetToDefault(float duration)
+    {
+        if (duration > 0f)
+        {
+            if (isImage) gameObject.GetComponent<Image>().DOColor(Color.white, duration).SetEase(Ease.OutQuad);
+            else gameObject.GetComponentInChildren<TextMeshProUGUI>().DOColor(Color.white, duration).SetEase(Ease.OutQuad);
+            transform.DOScale(initialScale, 0.1f).SetEase(Ease.OutQuad);
+        }
+        else
+        {
+            if (isImage) gameObject.GetComponent<Image>().color = Color.white;
+            else gameObject.GetComponentInChildren<TextMeshProUGUI>().color = Color.white;
+            transform.localScale = initialScale;
+        }
     }
 }

@@ -32,8 +32,6 @@ public class UpgradeUI : MonoBehaviour
 
     private void OnEnable()
     {
-        // Когда игрок открывает меню паузы -> панель прокачки,
-        // принудительно обновляем данные на экране актуальными значениями
         RefreshUI();
     }
 
@@ -54,7 +52,6 @@ public class UpgradeUI : MonoBehaviour
     {
         txtSkillPointsCount.text = $"Очки навыков: {points}";
 
-        // Оптимизация: если очков нет, выключаем кликабельность кнопок плюсиков
         bool hasPoints = points > 0;
         btnUpgradeAttack.interactable = hasPoints;
         btnUpgradeDefense.interactable = hasPoints;
@@ -65,7 +62,7 @@ public class UpgradeUI : MonoBehaviour
     {
         txtAttackValue.text = $"Атака: {stats.attackPower}";
         txtDefenseValue.text = $"Защита: {stats.defense}";
-        txtSpeedValue.text = $"Скорость: {stats.moveSpeed:F1}"; // Округление до 1 знака после запятой
+        txtSpeedValue.text = $"Скорость: {stats.moveSpeed:F1}";
     }
 
     private void OnUpgradeAttackPressed()

@@ -326,21 +326,26 @@ MonoBehaviour:
   syncInterval: 0
   baseStats:
     attackPower: 25
-    defence: 0
+    defense: 0
     moveSpeed: 5
     critChance: 0
   CurrentStats:
     attackPower: 0
-    defence: 0
+    defense: 0
     moveSpeed: 0
     critChance: 0
+  availableSkillPoints: 0
+  attackUpgradeStep: 5
+  defenseUpgradeStep: 2
+  moveSpeedUpgradeStep: 0.5
   animator: {fileID: 0}
   playerSprite: {fileID: 9003223008710936474}
   spritesFaceLeftByDefault: 0
   invincibilityDuration: 1.5
   lastFacingDirection: {x: 0, y: -1}
-  maxAmmo: 5
-  currentAmmo: 5
-  attackCooldown: 0.5
+  targetEnemyPoint: {fileID: 7678639804672279078}
+  maxAmmo: 3
+  currentAmmo: 3
+  attackCooldown: 0.6
   attackPoint: {fileID: 1430616970221972457}
   projectilePrefab: {fileID: 4035624122863033488, guid: 4b3f345898a60594085fa0b6639ad8ad, type: 3}

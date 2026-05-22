@@ -57,7 +57,6 @@ public class RelayUI : MonoBehaviour
     {
         isLocal = !isLocal;
 
-        // Анимация текста при переключении (из MainMenu style)
         statusText.transform.DOPunchScale(Vector3.one * 0.15f, 0.2f);
 
         UpdateUIState();

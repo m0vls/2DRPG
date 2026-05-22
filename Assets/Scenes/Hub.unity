@@ -541,7 +541,7 @@ GameObject:
   - component: {fileID: 1166397292}
   - component: {fileID: 1166397291}
   - component: {fileID: 1166397290}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: BackWalls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2052,7 +2052,7 @@ GameObject:
   - component: {fileID: 1650007333}
   - component: {fileID: 1650007332}
   - component: {fileID: 1650007331}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Portal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2091,7 +2091,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   nextSceneName: Level1
-  requiredPlayers: 1
+  requiredPlayers: 2
 --- !u!114 &1650007332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2169,7 +2169,7 @@ GameObject:
   - component: {fileID: 1660415628}
   - component: {fileID: 1660415627}
   - component: {fileID: 1660415626}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: FrontWalls
   m_TagString: Untagged
   m_Icon: {fileID: 0}

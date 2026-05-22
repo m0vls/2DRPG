@@ -7,6 +7,7 @@ public class KnightPlayer : Player
     [Header("Настройки атаки")]
     [SerializeField] private float attackCooldown = 1f;
     [SerializeField] private float attackDuration = 0.2f;
+    [SerializeField] private float attackDelayBeforeHit = 0.1f;
 
     [Header("Компоненты для атаки")]
     [SerializeField] private Transform attackPoint;
@@ -73,6 +74,8 @@ public class KnightPlayer : Player
         CmdUpdateMovingState(false);
 
         TriggerAttackVisual("Attack");
+
+        yield return new WaitForSeconds(attackDelayBeforeHit);
         CmdExecuteAttack(lastFacingDirection);
 
         yield return new WaitForSeconds(attackDuration);

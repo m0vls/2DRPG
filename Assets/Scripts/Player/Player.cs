@@ -13,6 +13,7 @@ public abstract class Player : NetworkBehaviour, IDamageable
 
     [SyncVar(hook = nameof(OnSkillPointsChanged))] public int availableSkillPoints = 0;
 
+    [Space]
     // Настройки того, сколько дает 1 вложенное очко
     [SerializeField] private float attackUpgradeStep = 5f;
     [SerializeField] private float defenseUpgradeStep = 2f;
@@ -34,6 +35,8 @@ public abstract class Player : NetworkBehaviour, IDamageable
 
     [SyncVar(hook = nameof(OnMovingStateChanged))]
     private bool isMoving = false;
+
+    [Space] public Transform targetEnemyPoint;
 
     protected Rigidbody2D rb;
     protected InputSystem_Actions inputActions;
