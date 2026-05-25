@@ -12,6 +12,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject[] mainMenuButtons;
     [SerializeField] private GameObject[] connectMenuButtons;
     [SerializeField] private GameObject[] accountMenuButtons;
+    [SerializeField] private GameObject[] accountRunsList;
 
     private GameObject[] currentUI;
 
@@ -126,26 +127,32 @@ public class MainMenu : MonoBehaviour
         }
     }
 
-    private void SwitchMenu(GameObject[] from, GameObject[] to)
+    private void SwitchMenu(GameObject[] from, GameObject[] to, float coordsFrom, float coordsTo)
     {
-        StartCoroutine(AnimateButtons(from, 250f, false));
+        StartCoroutine(AnimateButtons(from, coordsFrom, false));
         currentUI = to;
-        StartCoroutine(AnimateButtons(to, 0f, true));
+        StartCoroutine(AnimateButtons(to, coordsTo, true));
     }
 
     public void PlayGame()
     {
-        SwitchMenu(mainMenuButtons, connectMenuButtons);
+        SwitchMenu(mainMenuButtons, connectMenuButtons, 250f, 0f);
     }
 
     public void OpenAccount()
     {
-        SwitchMenu(mainMenuButtons, accountMenuButtons);
+        SwitchMenu(mainMenuButtons, accountMenuButtons, 250f, 355f);
+        StartCoroutine(AnimateButtons(accountRunsList, 310f, true));
     }
 
     public void BackToMenu()
     {
-        SwitchMenu(currentUI, mainMenuButtons);
+        SwitchMenu(currentUI, mainMenuButtons, 250f, 0f);
+    }
+    public void BactToMenuFromAccount()
+    {
+        SwitchMenu(currentUI, mainMenuButtons, 605f, 0f);
+        StartCoroutine(AnimateButtons(accountRunsList, -300f, false));
     }
 
     public void ExitGame()

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +11,10 @@ public class LoginUI : MonoBehaviour
     [SerializeField] private Button registerButton;
     [SerializeField] private TMP_Text statusText;
     [SerializeField] private Button logoutButton;
+
+    [Header("Run History")]
+    [SerializeField] private RectTransform runHistoryContainer;
+    [SerializeField] private RunHistoryPanel runHistoryPrefab;
 
     [Header("Ссылка на MainMenu для обновления приветствия")]
     [SerializeField] private MainMenu mainMenu;
@@ -26,6 +31,8 @@ public class LoginUI : MonoBehaviour
     private void OnEnable()
     {
         UpdateUIState();
+        if (AuthManager.Instance != null && AuthManager.Instance.IsLoggedIn)
+            LoadRunHistory();
     }
 
     private void UpdateUIState()
@@ -74,6 +81,7 @@ public class LoginUI : MonoBehaviour
                 AuthManager.Instance.SaveSession(response);
                 if (MetaProgression.Instance != null)
                     MetaProgression.Instance.LoadProgress();
+                LoadRunHistory();
                 SetStatus("", Color.white);
                 UpdateUIState();
                 RefreshMainMenu();
@@ -119,6 +127,7 @@ public class LoginUI : MonoBehaviour
                 AuthManager.Instance.SaveSession(response);
                 if (MetaProgression.Instance != null)
                     MetaProgression.Instance.LoadProgress();
+                LoadRunHistory();
                 SetStatus("", Color.white);
                 UpdateUIState();
                 RefreshMainMenu();
@@ -135,8 +144,35 @@ public class LoginUI : MonoBehaviour
     private void OnLogout()
     {
         AuthManager.Instance.ClearSession();
+        ClearRunHistory();
         UpdateUIState();
         RefreshMainMenu();
+    }
+
+    private void LoadRunHistory()
+    {
+        if (runHistoryContainer == null || runHistoryPrefab == null) return;
+        ClearRunHistory();
+
+        StartCoroutine(ApiService.Instance.GetRunHistory(
+            entries =>
+            {
+                int uid = AuthManager.Instance?.CurrentUser?.id ?? 0;
+                foreach (var entry in entries)
+                {
+                    var panel = Instantiate(runHistoryPrefab, runHistoryContainer);
+                    panel.Populate(entry, uid);
+                }
+            },
+            error => Debug.LogError($"[LoginUI] Ошибка загрузки забегов: {error}")
+        ));
+    }
+
+    private void ClearRunHistory()
+    {
+        if (runHistoryContainer == null) return;
+        for (int i = runHistoryContainer.childCount - 1; i >= 0; i--)
+            Destroy(runHistoryContainer.GetChild(i).gameObject);
     }
 
     private void RefreshMainMenu()

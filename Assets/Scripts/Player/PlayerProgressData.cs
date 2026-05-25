@@ -57,6 +57,28 @@ public class RunRecord
 }
 
 [Serializable]
+public class RunHistoryEntry
+{
+    public int id;
+    public int user_id;
+    public double duration_seconds;
+    public int kills;
+    public bool victory;
+    public int currency_earned;
+    public int team_level;
+    public int teammate_id;
+    public string created_at;
+    public string teammate_nickname;
+    public string host_nickname;
+}
+
+[Serializable]
+public class RunHistoryList
+{
+    public RunHistoryEntry[] items;
+}
+
+[Serializable]
 public class ApiError
 {
     public string error;

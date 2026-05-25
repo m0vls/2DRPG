@@ -196,6 +196,8 @@ MonoBehaviour:
   maxHealth: 45
   detectionRange: 4
   xpReward: 15
+  currencyReward: 10
+  isBoss: 0
   spriteRenderer: {fileID: 7162007548977019698}
   animator: {fileID: 2045053971259875544}
   hitFlashColor: {r: 1, g: 0, b: 0, a: 1}
@@ -203,6 +205,7 @@ MonoBehaviour:
   spritesFaceLeftByDefault: 0
   knockbackForce: 1.5
   knockbackDuration: 0.2
+  isKnockbackable: 1
   currentHealth: 0
   dashSpeed: 6
   dashDuration: 0.5

@@ -51,6 +51,25 @@ public class ApiService : MonoBehaviour
         yield return Put("/progress", update, onSuccess, onError);
     }
 
+    public IEnumerator GetRunHistory(Action<RunHistoryEntry[]> onSuccess, Action<string> onError)
+    {
+        using var request = UnityWebRequest.Get(Url("/runs"));
+        if (!string.IsNullOrEmpty(AuthToken))
+            request.SetRequestHeader("Authorization", $"Bearer {AuthToken}");
+
+        yield return request.SendWebRequest();
+
+        if (request.result != UnityWebRequest.Result.Success)
+        {
+            onError?.Invoke(request.error);
+            yield break;
+        }
+
+        string wrapped = "{\"items\":" + request.downloadHandler.text + "}";
+        var data = JsonUtility.FromJson<RunHistoryList>(wrapped);
+        onSuccess?.Invoke(data.items);
+    }
+
     public IEnumerator PostRun(RunRecord run, Action onSuccess, Action<string> onError)
     {
         var json = JsonUtility.ToJson(run);
