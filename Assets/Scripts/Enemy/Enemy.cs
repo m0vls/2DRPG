@@ -13,6 +13,8 @@ public abstract class Enemy : NetworkBehaviour, IDamageable
     [SerializeField] protected float maxHealth = 50;
     [SerializeField] protected float detectionRange = 2f;
     [SerializeField] protected float xpReward = 5f;
+    [SerializeField] protected int currencyReward = 10;
+    [SerializeField] protected bool isBoss = false;
 
     [Header("Визуал и Анимация")]
     [SerializeField] protected SpriteRenderer spriteRenderer;
@@ -108,6 +110,9 @@ public abstract class Enemy : NetworkBehaviour, IDamageable
         if (currentHealth <= 0)
         {
             TeamStateManager.Instance.AddXP(xpReward);
+            TeamStateManager.Instance.AddCurrency(currencyReward);
+            TeamStateManager.Instance.AddKill();
+            if (isBoss) TeamStateManager.Instance.OnBossDefeated();
             NetworkServer.Destroy(gameObject);
         }
     }

@@ -8,12 +8,13 @@ public class RPGNetworkManager : NetworkManager
     public GameObject knightPrefab;
     public GameObject magePrefab;
 
-    private float startHealth = 100f;
+    public float startHealth = 100f;
 
     public float teamHealth;
 
     private readonly Dictionary<NetworkConnectionToClient, PlayerClass> playerChoices = new Dictionary<NetworkConnectionToClient, PlayerClass>();
-
+    public readonly Dictionary<NetworkConnectionToClient, string> playerNicknames = new Dictionary<NetworkConnectionToClient, string>();
+    public readonly Dictionary<NetworkConnectionToClient, int> clientUserIds = new Dictionary<NetworkConnectionToClient, int>();
     public override void OnStartServer()
     {
         teamHealth = startHealth;
@@ -30,11 +31,21 @@ public class RPGNetworkManager : NetworkManager
 
     private void OnCreateCharacter(NetworkConnectionToClient conn, CharacterSelectMessage message)
     {
-        // 1. Запоминаем выбор игрока
         playerChoices[conn] = message.characterClass;
-        
-        // 2. Вызываем метод спавна
+        playerNicknames[conn] = message.nickname;
+        clientUserIds[conn] = message.userId;
+
         SpawnPlayerForConnection(conn, message.characterClass);
+    }
+
+    public int GetTeammateUserId()
+    {
+        foreach (var kvp in clientUserIds)
+        {
+            if (kvp.Key.connectionId != 0)
+                return kvp.Value;
+        }
+        return 0;
     }
 
     private void SpawnPlayerForConnection(NetworkConnectionToClient conn, PlayerClass charClass)
@@ -45,6 +56,15 @@ public class RPGNetworkManager : NetworkManager
 
         Transform startPos = GetStartPosition();
         GameObject player = Instantiate(prefab, startPos.position, startPos.rotation);
+
+        if (playerNicknames.TryGetValue(conn, out string nick))
+        {
+            var playerComponent = player.GetComponent<Player>();
+            if (playerComponent != null)
+            {
+                playerComponent.playerNickname = nick;
+            }
+        }
 
         NetworkServer.AddPlayerForConnection(conn, player);
     }
@@ -66,6 +86,8 @@ public class RPGNetworkManager : NetworkManager
     {
         // Очищаем данные при выходе игрока из игры
         playerChoices.Remove(conn);
+        playerNicknames.Remove(conn);
+        clientUserIds.Remove(conn);
         base.OnServerDisconnect(conn);
     }
 }

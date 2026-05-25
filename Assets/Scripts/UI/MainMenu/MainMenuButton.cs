@@ -9,16 +9,20 @@ public class MainMenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     [SerializeField] private bool isImage = false;
     [SerializeField] private Color buttonSelectColor = Color.yellow;
 
+    private Button button;
     private float targetScale = 1.2f;
     private Vector3 initialScale;
 
     private void Awake()
     {
         initialScale = transform.localScale;
+        button = GetComponent<Button>();
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (!button.interactable) return;
+
         if (isImage) gameObject.GetComponent<Image>().DOColor(buttonSelectColor, 0.2f).SetEase(Ease.OutQuad);
         else gameObject.GetComponentInChildren<TextMeshProUGUI>().DOColor(buttonSelectColor, 0.2f).SetEase(Ease.OutQuad);
         transform.DOScale(initialScale * targetScale, 0.1f).SetEase(Ease.OutQuad);
@@ -26,6 +30,7 @@ public class MainMenuButton : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        if (!button.interactable) return;
         ResetToDefault(0.2f);
     }
 

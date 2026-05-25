@@ -7,7 +7,15 @@ public class PlayerStatusBar : MonoBehaviour
     [SerializeField] private Image xpBar;
 
     private float targetFillHp = 1f;
-    private float targetFillXp = 1f;
+    private float targetFillXp = 0f;
+
+    public void ResetUI()
+    {
+        targetFillHp = 1f;
+        targetFillXp = 0f;
+        healthBar.fillAmount = 1f;
+        xpBar.fillAmount = 0f;
+    }
 
     public void UpdateHealthBarUI(float currentHealth)
     {

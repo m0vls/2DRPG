@@ -13,6 +13,10 @@ public abstract class Player : NetworkBehaviour, IDamageable
 
     [SyncVar(hook = nameof(OnSkillPointsChanged))] public int availableSkillPoints = 0;
 
+    [SyncVar(hook = nameof(OnNicknameChanged))] public string playerNickname = "";
+
+    [SerializeField] private TMPro.TMP_Text nicknameText;
+
     [Space]
     // Настройки того, сколько дает 1 вложенное очко
     [SerializeField] private float attackUpgradeStep = 5f;
@@ -283,7 +287,6 @@ public abstract class Player : NetworkBehaviour, IDamageable
 
         availableSkillPoints--;
 
-        // Копируем, меняем, перезаписываем (правило Mirror для структур)
         CharacterStats tempStats = CurrentStats;
         tempStats.attackPower += attackUpgradeStep;
         CurrentStats = tempStats;
@@ -316,4 +319,10 @@ public abstract class Player : NetworkBehaviour, IDamageable
     }
 
     #endregion
+
+    private void OnNicknameChanged(string oldNick, string newNick)
+    {
+        if (nicknameText != null)
+            nicknameText.text = newNick;
+    }
 }

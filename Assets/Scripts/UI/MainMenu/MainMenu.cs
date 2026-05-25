@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
@@ -10,6 +11,7 @@ public class MainMenu : MonoBehaviour
     [Header("Коллекции UI")]
     [SerializeField] private GameObject[] mainMenuButtons;
     [SerializeField] private GameObject[] connectMenuButtons;
+    [SerializeField] private GameObject[] accountMenuButtons;
 
     private GameObject[] currentUI;
 
@@ -23,13 +25,16 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Transform TitleText;
     [SerializeField] private CanvasGroup pressAnyButtonText;
 
+    [Header("Приветствие")]
+    [SerializeField] private TMP_Text welcomeText;
+
     private IDisposable anyPressKey;
 
     private void OnEnable()
     {
         anyPressKey = InputSystem.onAnyButtonPress.CallOnce(ctrl => StartMenu());
     }
-    
+
     private void StartMenu()
     {
         pressAnyButtonText.DOFade(0, 0.5f)
@@ -41,7 +46,11 @@ public class MainMenu : MonoBehaviour
 
         RectTransform rt = TitleText.GetComponent<RectTransform>();
         rt.DOAnchorPosY(-200, 1.2f).SetEase(Ease.InOutQuart);
+
         
+        UpdateWelcomeText();
+        welcomeText.DOFade(1f, 1f);
+
         StartCoroutine(AnimateButtons(mainMenuButtons, 0f, true));
     }
 
@@ -103,16 +112,35 @@ public class MainMenu : MonoBehaviour
         }
     }
 
+    public void UpdateWelcomeText()
+    {
+        if (welcomeText == null) return;
+
+        if (AuthManager.Instance != null && AuthManager.Instance.IsLoggedIn)
+        {
+            welcomeText.text = $"Добро пожаловать, {AuthManager.Instance.PlayerNickname}!";
+        }
+        else
+        {
+            welcomeText.text = "Вы не вошли. Чтобы войти, нажмите кнопку \"Аккаунт\"";
+        }
+    }
+
     private void SwitchMenu(GameObject[] from, GameObject[] to)
     {
         StartCoroutine(AnimateButtons(from, 250f, false));
         currentUI = to;
         StartCoroutine(AnimateButtons(to, 0f, true));
-    } 
+    }
 
     public void PlayGame()
     {
         SwitchMenu(mainMenuButtons, connectMenuButtons);
+    }
+
+    public void OpenAccount()
+    {
+        SwitchMenu(mainMenuButtons, accountMenuButtons);
     }
 
     public void BackToMenu()

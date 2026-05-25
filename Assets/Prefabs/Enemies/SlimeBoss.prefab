@@ -196,6 +196,8 @@ MonoBehaviour:
   maxHealth: 300
   detectionRange: 14
   xpReward: 15
+  currencyReward: 10
+  isBoss: 1
   spriteRenderer: {fileID: 2786399578217223203}
   animator: {fileID: 0}
   hitFlashColor: {r: 1, g: 0, b: 0, a: 1}

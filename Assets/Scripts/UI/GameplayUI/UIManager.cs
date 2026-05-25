@@ -12,6 +12,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private DefeatUI defeatUI;
     [SerializeField] private SelectClassUI selectClassUI;
     [SerializeField] private PlayerStatusBar playerStatusBar;
+    [SerializeField] private CurrencyUI currencyUI;
     //[SerializeField] private ManaBar manaBar;
 
     [Header("Настройки Fade")]
@@ -71,10 +72,12 @@ public class UIManager : MonoBehaviour
     public void ShowKnightUI()
     {
         playerStatusBar.gameObject.SetActive(true);
+        currencyUI.gameObject.SetActive(true);
     }
     public void ShowMageUI()
     {
         playerStatusBar.gameObject.SetActive(true);
+        currencyUI.gameObject.SetActive(true);
     }
     public void ToggleSelectUI()
     {
@@ -89,7 +92,10 @@ public class UIManager : MonoBehaviour
 
     public void HideGameplayUI()
     {
+        playerStatusBar.ResetUI();
+        if (currencyUI != null) currencyUI.ResetUI();
         playerStatusBar.gameObject.SetActive(false);
+        if (currencyUI != null) currencyUI.gameObject.SetActive(false);
     }
 
     public void UpdateHealthUI(float health)
@@ -100,5 +106,10 @@ public class UIManager : MonoBehaviour
     public void UpdateXPBarUI(float currentXp, float xpToNextLevel)
     {
         playerStatusBar.UpdateXpBarUI(currentXp, xpToNextLevel);
+    }
+    public void UpdateCurrencyUI(int amount)
+    {
+        if (currencyUI != null)
+            currencyUI.UpdateCurrency(amount);
     }
 }

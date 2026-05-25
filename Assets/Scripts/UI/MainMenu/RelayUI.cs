@@ -109,7 +109,6 @@ public class RelayUI : MonoBehaviour
 
         if (isLocal)
         {
-            // Локальное подключение
             transport.useRelay = false;
             transport.Port = 7777;
             NetworkManager.singleton.networkAddress = string.IsNullOrEmpty(input) ? "localhost" : input;
