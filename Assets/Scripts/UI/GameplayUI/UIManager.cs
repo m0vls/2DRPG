@@ -85,9 +85,9 @@ public class UIManager : MonoBehaviour
         go.SetActive(!go.activeSelf);
     }
 
-    public void ShowDefeat()
+    public void ShowDefeat(bool isVictory)
     {
-        defeatUI.ShowDefeatScreen();
+        defeatUI.ShowDefeatScreen(isVictory);
     }
 
     public void HideGameplayUI()

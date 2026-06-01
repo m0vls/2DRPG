@@ -1,5 +1,6 @@
 using Mirror;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class DefeatUI : MonoBehaviour
@@ -8,15 +9,18 @@ public class DefeatUI : MonoBehaviour
     [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private float fadeDuration = 3f;
     [SerializeField] private float waitBeforeHub = 2f;
+    [SerializeField] private TMP_Text titleText;
 
     private void Awake()
     {
         canvasGroup.alpha = 0;
         canvasGroup.gameObject.SetActive(false);
     }
-    public void ShowDefeatScreen()
+    public void ShowDefeatScreen(bool isVictory)
     {
         canvasGroup.gameObject.SetActive(true);
+        if (isVictory) titleText.text = "Победа";
+        else titleText.text = "Вы погибли";
         StartCoroutine(DefeatSequence());
     }
 

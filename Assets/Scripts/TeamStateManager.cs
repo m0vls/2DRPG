@@ -94,7 +94,7 @@ public class TeamStateManager : NetworkBehaviour
 
         if (newHealth <= 0)
         {
-            UIManager.Instance?.ShowDefeat();
+            UIManager.Instance?.ShowDefeat(false);
         }
     }
 
@@ -188,6 +188,7 @@ public class TeamStateManager : NetworkBehaviour
         if (isGameOver) return;
         isGameOver = true;
         Debug.Log("Босс убит!");
+        UIManager.Instance?.ShowDefeat(true);
         SaveEndRunProgress(true);
     }
 
